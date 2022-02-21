@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/rkrowchuk/tinyapp/issues"
   },
-  "homepage": "https://github.com/rkrowchuk/tinyapp#readme"
+  "homepage": "https://github.com/rkrowchuk/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.17.3"
+  }
 }
