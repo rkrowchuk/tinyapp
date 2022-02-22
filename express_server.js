@@ -7,6 +7,7 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080]
 const bodyParser = require("body-parser");
+const { status } = require("express/lib/response");
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.set("view engine", "ejs");
@@ -36,13 +37,18 @@ app.post("/urls", (req, res) => {
   console.log(req.body);  // Log the POST request body to the console
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
-  res.redirect(`/urls/${shortURL}`);
+    res.redirect(`/urls/${shortURL}`);
   //res.send('Ok');         // Respond with 'Ok' (we will replace this)
 });
 
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
-  res.redirect(longURL);
+  if (urlDatabase[req.params.shortURL] === undefined) {
+    res.status(400).send('Error: this page does not exist');
+  } else {
+    res.redirect(longURL);
+  }
+
 });
 
 app.get("/urls", (req, res) => {
