@@ -41,6 +41,13 @@ app.post("/urls", (req, res) => {
   //res.send('Ok');         // Respond with 'Ok' (we will replace this)
 });
 
+app.post("/urls", (req, res) => {
+  console.log(req.body);  // Log the POST request body to the console
+  delete urlDatabase[req.params.shortURL];
+  res.redirect(`/urls`);
+  //res.send('Ok');         // Respond with 'Ok' (we will replace this)
+});
+
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   if (urlDatabase[req.params.shortURL] === undefined) {
