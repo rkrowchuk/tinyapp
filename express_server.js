@@ -30,7 +30,15 @@ const users = {
     email: "user2@example.com", 
     password: "dishwasher-funk"
   }
-}
+};
+
+const emailMatch = function(input) {
+  for (let user in users) {
+    if (input === users[user].email) {
+      return true;
+    }
+  }
+};
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -60,9 +68,16 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   const newUser = generateRandomString();
-  users.newUser = { id: newUser, email: req.body.email, password: req.body.password };
-  res.cookie("user_id", req.body.email);
-  res.redirect("/urls");
+  
+  if (!req.body.email) {
+    res.redirect(400, "/register");
+  } else if (emailMatch(req.body.email) === true) {
+    res.redirect(400, "/register");
+  } else {
+    users.newUser = { id: newUser, email: req.body.email, password: req.body.password };
+    res.cookie("user_id", req.body.email);
+    res.redirect("/urls");
+  }
 });
 
 app.post("/urls", (req, res) => {
