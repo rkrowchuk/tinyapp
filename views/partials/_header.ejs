@@ -12,11 +12,19 @@
     </div>
 
   </nav>
-  <form class="form-inline" action="/login" method="POST">
-    <div class="form-group mb-2">
-      <input class="form-control" type="text" name="username" placeholder="Username" style="width: 300px; margin: 1em">
-      <button type="submit" class="btn btn-outline-secondary">Submit</button>
-    </div>
-  </form>
-  <p>Logged in as <%= username %></p>
+  <% if (username) { %>
+    <form class="form-inline" action="/logout" method="POST">
+      <div class="form-group mb-2">
+        <input class="form-control" type="text" name="username" placeholder="Logged in as <%= username %>" style="width: 300px; margin: 1em">
+        <button type="submit" class="btn btn-outline-secondary">Logout</button>
+      </div>
+    </form>
+  <% } else { %>
+    <form class="form-inline" action="/login" method="POST">
+      <div class="form-group mb-2">
+        <input class="form-control" type="text" name="username" placeholder="Username" style="width: 300px; margin: 1em">
+        <button type="submit" class="btn btn-outline-secondary">Login</button>
+      </div>
+    </form>
+  <% } %>
 </header>
