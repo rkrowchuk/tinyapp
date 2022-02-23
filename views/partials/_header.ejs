@@ -12,17 +12,17 @@
     </div>
 
   </nav>
-  <% if (username) { %>
+  <% if (user_id) { %>
     <form class="form-inline" action="/logout" method="POST">
       <div class="form-group mb-2">
-        <input class="form-control" type="text" name="username" placeholder="Logged in as <%= username %>" style="width: 300px; margin: 1em">
+        <input class="form-control" type="text" name="user_id" placeholder="Logged in as <%= user_id %>" style="width: 300px; margin: 1em">
         <button type="submit" class="btn btn-outline-success">Logout</button>
       </div>
     </form>
   <% } else { %>
     <form class="form-inline" action="/login" method="POST">
       <div class="form-group mb-2">
-        <input class="form-control" type="text" name="username" placeholder="Username" style="width: 300px; margin: 1em">
+        <input class="form-control" type="text" name="user_id" placeholder="Username" style="width: 300px; margin: 1em">
         <button type="submit" class="btn btn-outline-success">Login</button>
       </div>
     </form>
