@@ -10,7 +10,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const { status } = require("express/lib/response");
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser({extended: false}));
+app.use(cookieParser());
 
 app.set("view engine", "ejs");
 
@@ -18,6 +18,19 @@ const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+}
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -45,11 +58,19 @@ app.get("/register", (req, res) => {
   res.render("urls_register", templateVars);
 });
 
+app.post("/register", (req, res) => {
+  const newUser = generateRandomString();
+  users.newUser = { id: newUser, email: req.body.email, password: req.body.password };
+  res.cookie("user_id", newUser);
+  console.log(newUser);
+  res.redirect("/urls");
+});
+
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
+  console.log(req.body);  
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
-    res.redirect(`/urls/${shortURL}`);
+  res.redirect(`/urls/${shortURL}`);
 });
 
 
