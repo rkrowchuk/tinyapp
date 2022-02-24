@@ -36,7 +36,14 @@
             </form> 
             </td> 
           </tr>
-          <% } %>
+          <% } else { %>
+            <tr>
+              <td><a href="<%= urls[url].longURL%>"><%= url %></a></td>
+              <td></td>
+              <td></td> 
+              <td></td>
+            </tr>
+            <% } %>
         <% } %>
       </tbody>
     </table>
