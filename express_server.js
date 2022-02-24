@@ -7,11 +7,16 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080]
 const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
+// const cookieParser = require("cookie-parser");
+var cookieSession = require('cookie-session')
 const bcrypt = require('bcryptjs');
 const { status } = require("express/lib/response");
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['tinyapp key'],
+}))
+// app.use(cookieParser());
 
 app.set("view engine", "ejs");
 
@@ -63,13 +68,13 @@ const authenticate = function(db, email, password) {
   }
 };
 
-const getID = function(email, db) {
-  for (let user in db) {
-    if (emailMatch(email)) {
-      return user;
-    }
-  }
-};
+// const getID = function(email, db) {
+//   for (let user in db) {
+//     if (emailMatch(email)) {
+//       return user;
+//     }
+//   }
+// };
 
 const urlsForUser = function(id) {
   let urls = [];
@@ -93,7 +98,7 @@ app.get("/urls.json", (req, res) => {
 // display page to add new url
 app.get("/urls/new", (req, res) => {
   const templateVars = { 
-    user_id: req.cookies["user_id"] 
+    user_id: req.session.user_id 
   };
   res.render("urls_new", templateVars);
 });
@@ -101,7 +106,7 @@ app.get("/urls/new", (req, res) => {
 // display page to register an account
 app.get("/register", (req, res) => {
   const templateVars = { 
-    user_id: req.cookies["user_id"] 
+    user_id: req.session.user_id 
   };
   res.render("urls_register", templateVars);
 });
@@ -118,7 +123,7 @@ app.post("/register", (req, res) => {
     const password = req.body.password;
     const hashedPassword = bcrypt.hashSync(password, 10);
     users.newUser = { id: newUser, email: req.body.email, password: hashedPassword };
-    res.cookie("user_id", req.body.email);
+    req.session.user_id = req.body.email;
     res.redirect("/urls");
   }
 });
@@ -126,7 +131,7 @@ app.post("/register", (req, res) => {
 // display page to login
 app.get("/login", (req, res) => {
   const templateVars = { 
-    user_id: req.cookies["user_id"] 
+    user_id: req.session.user_id 
   };
   res.render("urls_login", templateVars);
 });
@@ -148,7 +153,7 @@ app.get("/u/:id", (req, res) => {
 app.get("/urls", (req, res) => {
   const templateVars = { 
     urls: urlDatabase,
-    user_id: req.cookies["user_id"] 
+    user_id: req.session.user_id 
   };
   res.render("urls_index", templateVars);
 });
@@ -158,7 +163,7 @@ app.get("/urls/:id", (req, res) => {
   const templateVars = { 
     shortURL: req.params.id, 
     longURL: urlDatabase[req.params.id].longURL,
-    user_id: req.cookies["user_id"] 
+    user_id: req.session.user_id 
   };
   res.render("urls_show", templateVars);
 });
@@ -173,7 +178,7 @@ app.post("/login", (req, res) => {
     res.redirect(403, "/login");
   } else {
     if (bcrypt.compareSync(password, user.password)) {
-      res.cookie("user_id", email);
+      req.session.user_id = req.body.email;
       res.redirect("/urls");
     } else {
       res.redirect(403, "/login");
@@ -183,7 +188,7 @@ app.post("/login", (req, res) => {
 
 // submit request to logout of account
 app.post("/logout", (req, res) => {
-  res.clearCookie("user_id");
+  req.session.user_id = null;
   res.redirect("/urls");
 });
 
