@@ -15,8 +15,14 @@ app.use(cookieParser());
 app.set("view engine", "ejs");
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": {
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "userRandomID" 
+  },
+  "9sm5xK": {
+    longURL: "http://www.google.com",
+    userID: "userRandomID"
+  }
 };
 
 const users = { 
@@ -31,7 +37,7 @@ const users = {
     password: "dishwasher-funk"
   }
 };
-// helper function to check if email is in user database
+// helper functions 
 const emailMatch = function(input) {
   for (let user in users) {
     if (input === users[user].email) {
@@ -49,6 +55,14 @@ const authenticate = function(db, email, password) {
       }
     }
     return false;
+  }
+};
+
+const getID = function(email, db) {
+  for (let user in db) {
+    if (emailMatch(email) === true) {
+      return user;
+    }
   }
 };
 
@@ -87,7 +101,7 @@ app.post("/register", (req, res) => {
     res.redirect(400, "/register");
   } else {
     users.newUser = { id: newUser, email: req.body.email, password: req.body.password };
-    res.cookie("user_id", req.body.email);
+    res.cookie("user_id", req.body.id);
     res.redirect("/urls");
   }
 });
@@ -102,16 +116,16 @@ app.get("/login", (req, res) => {
 
 // submit a new url
 app.post("/urls", (req, res) => {
-  console.log(req.body);  
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
+  urlDatabase[shortURL] = { longURL: req.body.longURL };
   res.redirect(`/urls/${shortURL}`);
 });
 
 // display original website through shortened URL
-app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
-  if (urlDatabase[req.params.shortURL] === undefined) {
+app.get("/u/:id", (req, res) => {
+  console.log(req.params);
+  const longURL = urlDatabase[req.params.id].longURL;
+  if (urlDatabase[req.params.id] === undefined) {
     res.status(400).send('Error: this page does not exist');
   } else {
     res.redirect(longURL);
@@ -128,10 +142,11 @@ app.get("/urls", (req, res) => {
 });
 
 // display information about single url
-app.get("/urls/:shortURL", (req, res) => {
+app.get("/urls/:id", (req, res) => {
+  console.log(":id", req.params.id);
   const templateVars = { 
-    shortURL: req.params.shortURL, 
-    longURL: urlDatabase[req.params.shortURL],
+    shortURL: req.params.id, 
+    longURL: urlDatabase[req.params.id].longURL,
     user_id: req.cookies["user_id"] 
   };
   res.render("urls_show", templateVars);
@@ -150,7 +165,8 @@ app.post("/login", (req, res) => {
     } else if (emailMatch(email) === true) {
       let id = "";
       if (authenticate(users, email, password) === true) {
-      res.cookie("user_id", email);
+        id = getID(email, users);
+      res.cookie("user_id", id);
       res.redirect("/urls");
       }
     }
@@ -172,7 +188,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 // edit a url in the database
-app.post("/urls/:shortURL/update", (req, res) => {
+app.post("/urls/:id/update", (req, res) => {
   const shortURL = req.params.shortURL;
   const newURL = req.body.longURL;
   urlDatabase[shortURL] = newURL;

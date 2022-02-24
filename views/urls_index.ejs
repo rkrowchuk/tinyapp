@@ -23,9 +23,10 @@
       </thead>
       <tbody>
         <% for(let url in urls) { %>
+          <% if (urls[url].userID === user_id) {%>
           <tr>
             <td><%= url %></td>
-            <td><%= urls[url] %></td>
+            <td><%= urls[url].longURL %></td>
             <td>
               <button type="button" class="btn btn-outline-success"><a href ="/urls/<%= url %>" style ="color:#28a745">Edit</a></button>
             </td> 
@@ -35,6 +36,7 @@
             </form> 
             </td> 
           </tr>
+          <% } %>
         <% } %>
       </tbody>
     </table>
