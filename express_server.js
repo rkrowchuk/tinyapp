@@ -8,6 +8,7 @@ const app = express();
 const PORT = 8080; // default port 8080]
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const bcrypt = require('bcryptjs');
 const { status } = require("express/lib/response");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
@@ -44,16 +45,16 @@ const users = {
 // helper functions 
 const emailMatch = function(input) {
   for (let user in users) {
-    if (input === users[user].email) {
-      return true;
+    if (input === users[user]["email"]) {
+      return users[user];
     }
-    return false;
   }
+  return false;
 };
 
 const authenticate = function(db, email, password) {
   for (let user in db) {
-    if (emailMatch(email) === true) {
+    if (emailMatch(email)) {
       if (password === db[user].password) {
         return true;
       }
@@ -64,7 +65,7 @@ const authenticate = function(db, email, password) {
 
 const getID = function(email, db) {
   for (let user in db) {
-    if (emailMatch(email) === true) {
+    if (emailMatch(email)) {
       return user;
     }
   }
@@ -114,8 +115,10 @@ app.post("/register", (req, res) => {
   } else if (emailMatch(req.body.email) === true) {
     res.redirect(400, "/register");
   } else {
-    users.newUser = { id: newUser, email: req.body.email, password: req.body.password };
-    res.cookie("user_id", req.body.id);
+    const password = req.body.password;
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    users.newUser = { id: newUser, email: req.body.email, password: hashedPassword };
+    res.cookie("user_id", req.body.email);
     res.redirect("/urls");
   }
 });
@@ -164,19 +167,16 @@ app.get("/urls/:id", (req, res) => {
 app.post("/login", (req, res) => {
   const email = req.body.email; 
   const password = req.body.password;
-
-  if (emailMatch(email) === false) {
+  const user = emailMatch(email);
+ 
+  if (!user) {
     res.redirect(403, "/login");
-  } else if (emailMatch(email) === true) {
-    if (authenticate(users, email, password) === false) {
-      res.redirect(403, "/login");
-    } else if (emailMatch(email) === true) {
-      let id = "";
-      if (authenticate(users, email, password) === true) {
-        id = getID(email, users);
-      res.cookie("user_id", id);
+  } else {
+    if (bcrypt.compareSync(password, user.password)) {
+      res.cookie("user_id", email);
       res.redirect("/urls");
-      }
+    } else {
+      res.redirect(403, "/login");
     }
   }
 });
