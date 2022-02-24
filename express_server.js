@@ -123,13 +123,8 @@ app.post("/urls", (req, res) => {
 
 // display original website through shortened URL
 app.get("/u/:id", (req, res) => {
-  console.log(req.params);
-  const longURL = urlDatabase[req.params.id].longURL;
-  if (urlDatabase[req.params.id] === undefined) {
-    res.status(400).send('Error: this page does not exist');
-  } else {
-    res.redirect(longURL);
-  }
+  const long = urlDatabase[req.params.id].longURL;
+  res.redirect(long);
 });
 
 // display main index of urls
@@ -143,7 +138,6 @@ app.get("/urls", (req, res) => {
 
 // display information about single url
 app.get("/urls/:id", (req, res) => {
-  console.log(":id", req.params.id);
   const templateVars = { 
     shortURL: req.params.id, 
     longURL: urlDatabase[req.params.id].longURL,
