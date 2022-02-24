@@ -12,6 +12,9 @@
   <%- include('partials/_header') %>
   <main style="margin: 1em;">
     <h3>My URLs</h3>
+    <% if (!user_id) { %>
+      <h4>Please login to your account.</h4>
+      <% } else { %>
     <table class="table">
       <thead>
         <tr>
@@ -23,9 +26,8 @@
       </thead>
       <tbody>
         <% for(let url in urls) { %>
-          <% if (urls[url].userID === user_id) {%>
           <tr>
-            <td><%= url %></td>
+            <td><a href="<%= urls[url].longURL%>" style ="color:#28a745"><%= url %></a></td>
             <td><%= urls[url].longURL %></td>
             <td>
               <button type="button" class="btn btn-outline-success"><a href ="/urls/<%= url %>" style ="color:#28a745">Edit</a></button>
@@ -36,17 +38,11 @@
             </form> 
             </td> 
           </tr>
-          <% } else { %>
-            <tr>
-              <td><a href="<%= urls[url].longURL%>" style ="color:#28a745"><%= url %></a></td>
-              <td></td>
-              <td></td> 
-              <td></td>
-            </tr>
-            <% } %>
-        <% } %>
+          <% } %>
       </tbody>
     </table>
+    <% } %>
+     
   </main>
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

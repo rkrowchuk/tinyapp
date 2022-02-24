@@ -17,10 +17,14 @@ app.set("view engine", "ejs");
 const urlDatabase = {
   "b2xVn2": {
     longURL: "http://www.lighthouselabs.ca",
-    userID: "userRandomID" 
+    userID: "userRandom2ID" 
   },
   "9sm5xK": {
     longURL: "http://www.google.com",
+    userID: "userRandomID"
+  },
+  "12345": {
+    longURL: "http://www.twitter.com",
     userID: "userRandomID"
   }
 };
@@ -65,6 +69,16 @@ const getID = function(email, db) {
     }
   }
 };
+
+const urlsForUser = function(id) {
+  let urls = [];
+  for (let url in urlDatabase) {
+    if (urlDatabase[url].userID === id) {
+      urls.push(urlDatabase[url].longURL);
+    }
+  }
+  return urls;
+}
 
 // redirect to index of urls
 app.get("/", (req, res) => {
@@ -176,18 +190,40 @@ app.post("/logout", (req, res) => {
 // delete a url from the database
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
-  delete urlDatabase[shortURL];
-  console.log("url was deleted");
-  res.redirect("/urls");
+  const userID = req.cookies.user_id;
+  if(!userID) {
+    res.redirect(400, "/urls");
+  } else if (userID) {
+    for (let url of urlsForUser(userID)) {
+      if (url !== urlDatabase[shortURL].longURL) {
+        res.redirect(400, "/urls");
+      } else { 
+        delete urlDatabase[shortURL];
+        console.log("url was deleted");
+        res.redirect("/urls");
+      }
+    }
+  }
 });
 
 // edit a url in the database
-app.post("/urls/:id/update", (req, res) => {
+app.post("/urls/:shortURL/update", (req, res) => {
   const shortURL = req.params.shortURL;
+  const userID = req.cookies.user_id;
   const newURL = req.body.longURL;
-  urlDatabase[shortURL] = newURL;
-  console.log("url was changed");
-  res.redirect("/urls");
+  if(!userID) {
+    res.redirect(400, "/urls");
+  } else if (userID) {
+    for (let url of urlsForUser(userID)) {
+      if (url !== urlDatabase[shortURL].longURL) {
+        res.redirect(400, "/urls");
+      } else { 
+        urlDatabase[shortURL].longURL = newURL;
+        console.log("url was changed");
+        res.redirect("/urls");
+      }
+    }
+  }
 });
 
 // show when the server is ready
