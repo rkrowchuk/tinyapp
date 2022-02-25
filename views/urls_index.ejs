@@ -12,9 +12,6 @@
   <%- include('partials/_header') %>
   <main style="margin: 1em;">
     <h3>My URLs</h3>
-    <% if (!user_id) { %>
-      <h4>Please login to your account.</h4>
-      <% } else { %>
     <table class="table">
       <thead>
         <tr>
@@ -27,8 +24,8 @@
       <tbody>
         <% for(let url in urls) { %>
           <tr>
-            <td><a href="<%= urls[url].longURL%>" style ="color:#28a745"><%= url %></a></td>
-            <td><%= urls[url].longURL %></td>
+            <td><%= url %></td>
+            <td><%= urls[url]%></td>
             <td>
               <button type="button" class="btn btn-outline-success"><a href ="/urls/<%= url %>" style ="color:#28a745">Edit</a></button>
             </td> 
@@ -41,7 +38,7 @@
           <% } %>
       </tbody>
     </table>
-    <% } %>
+ 
      
   </main>
   <!-- Bootstrap JS -->

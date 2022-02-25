@@ -12,10 +12,10 @@
     </div>
 
   </nav>
-  <% if (user_id) { %>
+  <% if (user) { %>
     <form class="form-inline" action="/logout" method="POST">
       <div class="form-group mb-2">
-        <input class="form-control" type="text" name="user_id" placeholder="Logged in as <%= user_id %>" style="width: 300px; margin: 1em">
+        <input class="form-control" type="text" name="user" placeholder="Logged in as <%= user.email %>" style="width: 300px; margin: 1em">
         <button type="submit" class="btn btn-outline-success">Logout</button>
       </div>
     </form>

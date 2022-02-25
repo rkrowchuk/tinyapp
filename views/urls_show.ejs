@@ -9,14 +9,14 @@
 <body>
   <%- include('partials/_header') %>
   <div class="card text-center">
-    <% if (!user_id) { %>
+    <% if (!user) { %>
       <h4>Please login to your account.</h4>
       <% } else { %>
       <div class="card-header"></div>
       <div class="card-body">
         <h5 class="card-title">TinyURL for: <%= longURL %></h5>
         <p class="card-text" action="/u/<%= shortURL %>" method = "GET">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
-        <form class="form-inline" action="/urls/<%= shortURL%>/update" method="POST">
+        <form class="form-inline" action="/urls/<%= shortURL%>" method="POST">
           <div class="form-group mb-2">
             <label for="longURL">Update this URL:</label>
             <input class="form-control" type="text" name="longURL" placeholder="http://" style="width: 300px; margin: 1em">
