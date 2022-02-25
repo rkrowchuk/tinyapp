@@ -11,6 +11,7 @@ const bodyParser = require("body-parser");
 var cookieSession = require('cookie-session')
 const bcrypt = require('bcryptjs');
 const { status } = require("express/lib/response");
+const getUserByEmail = require("./helpers.js");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
   name: 'session',
@@ -48,14 +49,7 @@ const users = {
   }
 };
 // helper functions 
-const getUserByEmail = function(input, db) {
-  for (let user in db) {
-    if (input === db[user]["email"]) {
-      return db[user];
-    }
-  }
-  return false;
-};
+
 
 const authenticate = function(db, email, password) {
   for (let user in db) {
