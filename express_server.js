@@ -48,10 +48,10 @@ const users = {
   }
 };
 // helper functions 
-const emailMatch = function(input) {
-  for (let user in users) {
-    if (input === users[user]["email"]) {
-      return users[user];
+const getUserByEmail = function(input, db) {
+  for (let user in db) {
+    if (input === db[user]["email"]) {
+      return db[user];
     }
   }
   return false;
@@ -59,7 +59,7 @@ const emailMatch = function(input) {
 
 const authenticate = function(db, email, password) {
   for (let user in db) {
-    if (emailMatch(email)) {
+    if (getUserByEmail(email, users)) {
       if (password === db[user].password) {
         return true;
       }
@@ -117,7 +117,7 @@ app.post("/register", (req, res) => {
   
   if (!req.body.email) {
     res.redirect(400, "/register");
-  } else if (emailMatch(req.body.email) === true) {
+  } else if (getUserByEmail(req.body.email, users) === true) {
     res.redirect(400, "/register");
   } else {
     const password = req.body.password;
@@ -172,7 +172,7 @@ app.get("/urls/:id", (req, res) => {
 app.post("/login", (req, res) => {
   const email = req.body.email; 
   const password = req.body.password;
-  const user = emailMatch(email);
+  const user = getUserByEmail(email, users);
  
   if (!user) {
     res.redirect(403, "/login");
