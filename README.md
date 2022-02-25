@@ -4,11 +4,11 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
-!["Main index of user saved urls"](docs/url_index.png)
+!["Main index of user saved urls"](https://github.com/rkrowchuk/tinyapp/blob/main/docs/url_index.png?raw=true)
 
-!["Create a new url"](docs/url_new.png)
+!["Create a new url"](https://github.com/rkrowchuk/tinyapp/blob/main/docs/url_new.png?raw=true)
 
-!["View url information"](docs/url_show.png)
+!["View url information"](https://github.com/rkrowchuk/tinyapp/blob/main/docs/url_show.png?raw=true)
 
 ## Dependencies
 
